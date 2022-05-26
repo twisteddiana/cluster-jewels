@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+      "router": "https://unpkg.com/vue-router@4.0.5/dist/vue-router.global.js"
+    }
+  }
+</script>
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<div id="app" class="container-lg">
+  <div class="row">
+    <div class="col">
+      <textarea v-model="itemString" placeholder="Paste item" class="form-control" rows="30"></textarea>
+      <button @click="goToItem" class="btn btn-secondary">Display</button>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col text-center">
+          {{skills[1]}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          {{skills[0]}}
+        </div>
+        <div class="col text-center">
+          {{skills[2]}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createApp } from 'vue';
+  import { getPositions, getItem, getHash } from './scripts.js';
+
+  createApp({
+    data() {
+      return {
+        itemString: getItem(),
+        itemEncoded: getHash(getItem()),
+        skills: [],
+      }
+    },
+    methods: {
+      goToItem() {
+        this.itemEncoded = getHash(this.itemString);
+        window.location.hash = this.itemEncoded;
+      },
+      displayItem() {
+        this.itemEncoded = window.location.hash.replace('#', '');
+        this.itemString = getItem(this.itemEncoded);
+        this.skills = getPositions(this.itemString);
+      },
+    },
+    mounted() {
+      this.displayItem();
+      window.addEventListener('hashchange', () => {
+        this.displayItem();
+      })
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>
