@@ -38,17 +38,18 @@ function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
 
   ctx.closePath();
 
-  ctx.font = '20px Noto Sans';
+  const fontSize = 20;
+  ctx.font = `${fontSize}px Noto Sans`;
   ctx.textBaseline = "middle";
   const padding = 20;
   const textY = top ? y - r - padding * 1.5 : y + r + padding * 1.5;
 
   const width = ctx.measureText(skillName).width;
   const bgX = x - (width + padding) / 2;
-  const bgY = textY - (20 + padding) / 2;
+  const bgY = textY - (fontSize + padding) / 2;
 
   ctx.fillStyle = 'black';
-  ctx.fillRect(bgX, bgY, width + padding, 20 + padding);
+  ctx.fillRect(bgX, bgY, width + padding, fontSize + padding);
   ctx.stroke();
 
   ctx.fillStyle = '#edc577';
