@@ -5,15 +5,35 @@ function circle(ctx, x, y, r, lineWidth, color) {
   ctx.stroke();
 };
 
-function drawCircle(canvas, x, y, r) {
-  const ctx = canvas.getContext("2d");
-  ctx.beginPath();
+function fill(ctx, color) {
+  ctx.fillStyle = color;
+  ctx.fill();
+};
 
-  circle(ctx, x, y, r, 7, '#af7d44');
-  circle(ctx, x, y, r, 3, '#f4ebd3');
-  circle(ctx, x, y, r, 1, '#d8b589');
+function drawJewelOutline(canvas, x, y, r) {
+  const outlineCtx = canvas.getContext("2d");
+  outlineCtx.beginPath();
 
-  ctx.closePath();
+  circle(outlineCtx, x, y, r, 7, '#af7d44');
+  circle(outlineCtx, x, y, r, 3, '#f4ebd3');
+  circle(outlineCtx, x, y, r, 1, '#d8b589');
+
+  outlineCtx.closePath();
+
+  const smallConnector = canvas.getContext("2d");
+  smallConnector.beginPath();
+  circle(smallConnector, x, y + r, 12,7, '#af7d44');
+  circle(smallConnector, x, y + r, 12,3, '#f4ebd3');
+  circle(smallConnector, x, y + r, 12, 1, '#d8b589');
+  fill(smallConnector,'black');
+  smallConnector.closePath();
+
+  const connectorLine = canvas.getContext("2d");
+  connectorLine.moveTo(x, y + r + 13);
+  connectorLine.lineTo(x, y + r + 80);
+  connectorLine.lineWidth = 4;
+  connectorLine.stroke();
+  connectorLine.closePath();
 };
 
 function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
@@ -32,9 +52,7 @@ function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
   circle(ctx, x, y, r, 5, '#e2c6b3');
   circle(ctx, x, y, r, 4, '#edc577');
 
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = 'black';
-  ctx.fill();
+  fill(ctx,'black');
 
   ctx.closePath();
 
@@ -66,8 +84,7 @@ export function drawCanvas(skills) {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  // jewel outline
-  drawCircle(canvas,330, 200, 120);
+  drawJewelOutline(canvas,330, 200, 120);
 
   drawSkillCircle(canvas, 330, 80, 25, skills[1]);
   drawSkillCircle(canvas, 225, 250, 25, skills[0]);
