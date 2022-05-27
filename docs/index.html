@@ -2,37 +2,38 @@
 <html lang="en">
 <head>
   <script type="importmap">
-    {
-      "imports": {
-        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-        "router": "https://unpkg.com/vue-router@4.0.5/dist/vue-router.global.js"
-      }
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+      "router": "https://unpkg.com/vue-router@4.0.5/dist/vue-router.global.js"
     }
-  </script>
+  }
+</script>
   <link href="bootstrap.min.css" rel="stylesheet">
-  <link href="./style.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
-  <title>Cluster-Jewels preview</title>
+  <title>Title</title>
 </head>
 <body>
+
 <div id="app" class="container-lg">
   <div class="row">
     <div class="col">
-      <h1>Large cluster jewel preview</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <textarea v-model="itemString" placeholder="Paste item" class="form-control" rows="20"></textarea>
-      <button @click="goToItem" class="btn btn-success">Display</button>
+      <textarea v-model="itemString" placeholder="Paste item" class="form-control" rows="30"></textarea>
+      <button @click="goToItem" class="btn btn-secondary">Display</button>
     </div>
     <div class="col">
       <div class="row">
-        <canvas id="canvas" width="660" height="400">
-        </canvas>
+        <div class="col text-center">
+          {{skills[1]}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          {{skills[0]}}
+        </div>
+        <div class="col text-center">
+          {{skills[2]}}
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +42,6 @@
 <script type="module">
   import { createApp } from 'vue';
   import { getPositions, getItem, getHash } from './scripts.js';
-  import { drawCanvas } from './canvas.js';
 
   createApp({
     data() {
@@ -60,7 +60,6 @@
         this.itemEncoded = window.location.hash.replace('#', '');
         this.itemString = getItem(this.itemEncoded);
         this.skills = getPositions(this.itemString);
-        drawCanvas(this.skills);
       },
     },
     mounted() {
