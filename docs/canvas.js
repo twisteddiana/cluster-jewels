@@ -1,46 +1,9 @@
-function circle(ctx, x, y, r, lineWidth, color) {
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.stroke();
-};
-
-function fill(ctx, color) {
-  ctx.fillStyle = color;
-  ctx.fill();
-};
-
-/*function drawJewelOutline(canvas, x, y, r) {
-  const outlineCtx = canvas.getContext("2d");
-  outlineCtx.beginPath();
-
-  circle(outlineCtx, x, y, r, 7, '#af7d44');
-  circle(outlineCtx, x, y, r, 3, '#f4ebd3');
-  circle(outlineCtx, x, y, r, 1, '#d8b589');
-
-  outlineCtx.closePath();
-
-  const smallConnector = canvas.getContext("2d");
-  smallConnector.beginPath();
-  circle(smallConnector, x, y + r, 12,7, '#af7d44');
-  circle(smallConnector, x, y + r, 12,3, '#f4ebd3');
-  circle(smallConnector, x, y + r, 12, 1, '#d8b589');
-  fill(smallConnector,'black');
-  smallConnector.closePath();
-
-  const connectorLine = canvas.getContext("2d");
-  connectorLine.moveTo(x, y + r + 13);
-  connectorLine.lineTo(x, y + r + 80);
-  connectorLine.lineWidth = 4;
-  connectorLine.stroke();
-  connectorLine.closePath();
-};*/
 
 const TO_RADIANS = Math.PI/180;
 function drawOrbit(canvas, x, y, r) {
   return new Promise(resolve => {
     const ctx = canvas.getContext('2d');
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
     image.src = './assets/orbit.png';
 
@@ -60,9 +23,9 @@ function drawOrbit(canvas, x, y, r) {
 function drawSockets(canvas) {
   return new Promise(resolve => {
     const ctx = canvas.getContext('2d');
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
-    image.src = './assets/socket3.png';
+    image.src = './assets/socket.png';
 
     function drawImageActualSize() {
       ctx.drawImage(this, 180, 115);
@@ -86,9 +49,9 @@ function drawSmallPassive(ctx, thisObj, x, y) {
 function drawSmallPassives(canvas, nbrPassives) {
   return new Promise(resolve => {
     const ctx = canvas.getContext('2d');
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
-    image.src = './assets/small_passive3.png';
+    image.src = './assets/small_passive.png';
 
     function drawImageActualSize() {
       drawSmallPassive(ctx, this, 300, 315);
@@ -118,7 +81,7 @@ function drawSmallPassives(canvas, nbrPassives) {
 function drawConnectorLine(canvas) {
   return new Promise(resolve => {
     const ctx = canvas.getContext('2d');
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
     image.src = './assets/line.png';
     function drawImageActualSize() {
@@ -146,7 +109,7 @@ async function drawJewelOutline(canvas, nbrPassives) {
 
 }
 
-function drawSkill(canvas, x, y, skill, top = true) {
+function drawSkill(canvas, x, y, skill, textPosition) {
   if (!skill) {
     return;
   }
@@ -154,9 +117,9 @@ function drawSkill(canvas, x, y, skill, top = true) {
   return new Promise(resolve => {
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
-    image.src = './assets/notable2.png';
+    image.src = './assets/notable.png';
 
     ctx.arc(x + 30, y + 30, 20, 0, 2 * Math.PI);
     ctx.fillStyle = '#150f0a';
@@ -165,30 +128,40 @@ function drawSkill(canvas, x, y, skill, top = true) {
     function drawImageActualSize() {
       ctx.drawImage(this, x, y);
 
-      // draw circle
-      //
-
-
-      /*const fontSize = 20;
+      const fontSize = 20;
       const padding = 20;
       const imageSize = 30;
 
-      ctx.font = `${fontSize}px Noto Sans`;
-      ctx.textBaseline = "middle";
+      const textCtx = canvas.getContext("2d");
+      textCtx.font = `${fontSize}px Noto Sans`;
+      textCtx.textBaseline = "middle";
+      textCtx.fillStyle = '#edc577';
 
-      const textY = top ? y - padding * 1.5 : y + imageSize * 2 + padding * 1.5;
 
-      const width = ctx.measureText(skill.name).width;
-      const bgX = x - (width + padding) / 2 + imageSize;
-      const bgY = textY - (fontSize + padding) / 2;
+      const width = textCtx.measureText(skill.name).width;
+      let textX;
+      let textY;
 
-      ctx.fillStyle = 'black';
-      ctx.fillRect(bgX, bgY, width + padding, fontSize + padding);
-      ctx.stroke();
+      if (!textPosition) {
+        // middle
+        textCtx.textAlign = 'center';
+        textX = x + imageSize;
+        textY = y - padding;
+      } else if (textPosition > 0) {
+        textCtx.textAlign = 'left';
+        // textX = x ;
+        // textY = y + 130;
+        textX = x;
+        textY = y + 100;
+      } else {
+        textCtx.textAlign = 'right';
+        textX = x + imageSize * 2;
+        textY = y + 100;
+        // textX = x - 20;
+        // textY = y + 130;
+      }
 
-      ctx.fillStyle = '#edc577';
-      ctx.textAlign = 'center';
-      ctx.fillText(skill.name, x + imageSize, textY);*/
+      textCtx.fillText(skill.name, textX, textY);
 
       resolve();
     }
@@ -238,7 +211,7 @@ function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
 function drawJewelBackground(canvas) {
   const ctx = canvas.getContext("2d");
   return new Promise(resolve => {
-    const image = new Image(240, 240);
+    const image = new Image();
     image.onload = drawImageActualSize;
     image.src = './assets/jewel_background.png';
     function drawImageActualSize() {
@@ -265,12 +238,9 @@ export async function drawCanvas(skills, nbrPassives) {
   await drawJewelBackground(canvas);
   await drawJewelOutline(canvas, nbrPassives);
 
-  await drawSkill(canvas, 300, 60, skills[1]);
-  await drawSkill(canvas, 410, 250, skills[0]);
-  await drawSkill(canvas, 190, 250, skills[2], false);
-  // drawSkillCircle(canvas, 330, 80, 25, skills[1]);
-  // drawSkillCircle(canvas, 225, 250, 25, skills[0]);
-  // drawSkillCircle(canvas, 440, 250, 25, skills[2], false);
+  await drawSkill(canvas, 300, 60, skills[1], 0);
+  await drawSkill(canvas, 410, 250, skills[0], 1);
+  await drawSkill(canvas, 190, 250, skills[2], -1);
 };
 
 
