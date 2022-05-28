@@ -62,14 +62,25 @@ function drawSockets(canvas) {
     const ctx = canvas.getContext('2d');
     const image = new Image(240, 240);
     image.onload = drawImageActualSize;
-    image.src = './assets/socket2.png';
+    image.src = './assets/socket3.png';
 
     function drawImageActualSize() {
-      ctx.drawImage(this, 180, 120);
-      ctx.drawImage(this, 400, 120);
+      ctx.drawImage(this, 180, 115);
+      ctx.drawImage(this, 400, 115);
       resolve();
     }
   });
+}
+
+function drawSmallPassive(ctx, thisObj, x, y) {
+  const r = 15;
+  ctx.beginPath();
+  ctx.arc(x + r * 2, y +  r * 2, r, 0, 2 * Math.PI);
+  ctx.fillStyle = '#150f0a';
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.drawImage(thisObj, x, y);
 }
 
 function drawSmallPassives(canvas, nbrPassives) {
@@ -77,26 +88,26 @@ function drawSmallPassives(canvas, nbrPassives) {
     const ctx = canvas.getContext('2d');
     const image = new Image(240, 240);
     image.onload = drawImageActualSize;
-    image.src = './assets/small_passive.png';
+    image.src = './assets/small_passive3.png';
 
     function drawImageActualSize() {
-      ctx.drawImage(this, 280, 295, 100, 100);
-      ctx.drawImage(this, 212, 57, 100, 100);
-      ctx.drawImage(this, 342, 57, 100, 100);
+      drawSmallPassive(ctx, this, 300, 315);
+      drawSmallPassive(ctx, this, 235, 80);
+      drawSmallPassive(ctx, this, 365, 80);
 
       if (nbrPassives > 8) {
-        ctx.drawImage(this, 405, 170, 100, 100);
+        drawSmallPassive(ctx, this, 427, 190);
       }
       if (nbrPassives > 9) {
-        ctx.drawImage(this, 147, 170, 100, 100);
+        drawSmallPassive(ctx, this, 172, 190);
       }
 
       if (nbrPassives > 10) {
-        ctx.drawImage(this, 340, 280, 100, 100);
+        drawSmallPassive(ctx, this, 358, 300);
       }
 
       if (nbrPassives > 11) {
-        ctx.drawImage(this, 220, 280, 100, 100);
+        drawSmallPassive(ctx, this, 241, 300);
       }
 
       resolve();
@@ -115,7 +126,7 @@ function drawConnectorLine(canvas) {
       ctx.translate(100, 100);
       ctx.rotate(90 * TO_RADIANS);
       ctx.translate(-100, -100);
-      ctx.drawImage(this, 350, -137, 100, 15);
+      ctx.drawImage(this, 350, -135, 100, 15);
       ctx.restore();
       resolve();
     }
@@ -145,9 +156,9 @@ function drawSkill(canvas, x, y, skill, top = true) {
     ctx.beginPath();
     const image = new Image(240, 240);
     image.onload = drawImageActualSize;
-    image.src = './assets/notable.png';
+    image.src = './assets/notable2.png';
 
-    ctx.arc(x+ 30, y + 30, 20, 0, 2 * Math.PI);
+    ctx.arc(x + 30, y + 30, 20, 0, 2 * Math.PI);
     ctx.fillStyle = '#150f0a';
     ctx.fill();
 
