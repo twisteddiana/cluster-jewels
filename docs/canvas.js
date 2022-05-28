@@ -10,7 +10,7 @@ function fill(ctx, color) {
   ctx.fill();
 };
 
-function drawJewelOutline(canvas, x, y, r) {
+/*function drawJewelOutline(canvas, x, y, r) {
   const outlineCtx = canvas.getContext("2d");
   outlineCtx.beginPath();
 
@@ -34,8 +34,157 @@ function drawJewelOutline(canvas, x, y, r) {
   connectorLine.lineWidth = 4;
   connectorLine.stroke();
   connectorLine.closePath();
-};
+};*/
 
+const TO_RADIANS = Math.PI/180;
+function drawOrbit(canvas, x, y, r) {
+  return new Promise(resolve => {
+    const ctx = canvas.getContext('2d');
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/orbit.png';
+
+    function drawImageActualSize() {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(r * TO_RADIANS);
+      ctx.translate(-x, -y);
+      ctx.drawImage(this, x, y);
+      ctx.restore();
+
+      resolve();
+    }
+  });
+}
+
+function drawSockets(canvas) {
+  return new Promise(resolve => {
+    const ctx = canvas.getContext('2d');
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/socket2.png';
+
+    function drawImageActualSize() {
+      ctx.drawImage(this, 180, 120);
+      ctx.drawImage(this, 400, 120);
+      resolve();
+    }
+  });
+}
+
+function drawSmallPassives(canvas, nbrPassives) {
+  return new Promise(resolve => {
+    const ctx = canvas.getContext('2d');
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/small_passive.png';
+
+    function drawImageActualSize() {
+      ctx.drawImage(this, 280, 295, 100, 100);
+      ctx.drawImage(this, 212, 57, 100, 100);
+      ctx.drawImage(this, 342, 57, 100, 100);
+
+      if (nbrPassives > 8) {
+        ctx.drawImage(this, 405, 170, 100, 100);
+      }
+      if (nbrPassives > 9) {
+        ctx.drawImage(this, 147, 170, 100, 100);
+      }
+
+      if (nbrPassives > 10) {
+        ctx.drawImage(this, 340, 280, 100, 100);
+      }
+
+      if (nbrPassives > 11) {
+        ctx.drawImage(this, 220, 280, 100, 100);
+      }
+
+      resolve();
+    }
+  });
+}
+
+function drawConnectorLine(canvas) {
+  return new Promise(resolve => {
+    const ctx = canvas.getContext('2d');
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/line.png';
+    function drawImageActualSize() {
+      ctx.save();
+      ctx.translate(100, 100);
+      ctx.rotate(90 * TO_RADIANS);
+      ctx.translate(-100, -100);
+      ctx.drawImage(this, 350, -137, 100, 15);
+      ctx.restore();
+      resolve();
+    }
+  });
+}
+
+async function drawJewelOutline(canvas, nbrPassives) {
+  // orbit is not perfect
+  await drawOrbit(canvas, 190, 80, 0);
+  await drawOrbit(canvas, 464, 79, 90);
+  await drawOrbit(canvas, 191, 354, -90);
+  await drawOrbit(canvas, 465, 353, 180);
+  await drawConnectorLine(canvas);
+
+  await drawSockets(canvas);
+  await drawSmallPassives(canvas, nbrPassives);
+
+}
+
+function drawSkill(canvas, x, y, skill, top = true) {
+  if (!skill) {
+    return;
+  }
+
+  return new Promise(resolve => {
+    const ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/notable.png';
+
+    ctx.arc(x+ 30, y + 30, 20, 0, 2 * Math.PI);
+    ctx.fillStyle = '#150f0a';
+    ctx.fill();
+
+    function drawImageActualSize() {
+      ctx.drawImage(this, x, y);
+
+      // draw circle
+      //
+
+
+      /*const fontSize = 20;
+      const padding = 20;
+      const imageSize = 30;
+
+      ctx.font = `${fontSize}px Noto Sans`;
+      ctx.textBaseline = "middle";
+
+      const textY = top ? y - padding * 1.5 : y + imageSize * 2 + padding * 1.5;
+
+      const width = ctx.measureText(skill.name).width;
+      const bgX = x - (width + padding) / 2 + imageSize;
+      const bgY = textY - (fontSize + padding) / 2;
+
+      ctx.fillStyle = 'black';
+      ctx.fillRect(bgX, bgY, width + padding, fontSize + padding);
+      ctx.stroke();
+
+      ctx.fillStyle = '#edc577';
+      ctx.textAlign = 'center';
+      ctx.fillText(skill.name, x + imageSize, textY);*/
+
+      resolve();
+    }
+  });
+}
+
+/*
 function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
   if (!skillName) {
     return;
@@ -73,9 +222,9 @@ function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
   ctx.fillStyle = '#edc577';
   ctx.textAlign = 'center';
   ctx.fillText(skillName, x, textY);
-}
+}*/
 
-export function drawCanvas(skills) {
+export async function drawCanvas(skills, nbrPassives) {
   if (!skills.length) {
     return;
   }
@@ -84,11 +233,14 @@ export function drawCanvas(skills) {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  drawJewelOutline(canvas,330, 200, 120);
+  await drawJewelOutline(canvas, nbrPassives);
 
-  drawSkillCircle(canvas, 330, 80, 25, skills[1]);
-  drawSkillCircle(canvas, 225, 250, 25, skills[0]);
-  drawSkillCircle(canvas, 440, 250, 25, skills[2], false);
+  await drawSkill(canvas, 300, 60, skills[1]);
+  await drawSkill(canvas, 410, 250, skills[0]);
+  await drawSkill(canvas, 190, 250, skills[2], false);
+  // drawSkillCircle(canvas, 330, 80, 25, skills[1]);
+  // drawSkillCircle(canvas, 225, 250, 25, skills[0]);
+  // drawSkillCircle(canvas, 440, 250, 25, skills[2], false);
 };
 
 

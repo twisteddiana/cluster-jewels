@@ -1,17 +1,45 @@
-import LZString from "./lzstring.js";
-import ClusterJewels from "./cluster-jewels.js";
+import LZString from './lzstring.js';
+import ClusterJewels from './cluster-jewels.js';
+import ClusterJewelsMods from './cluster-jewels-mods.js';
 
-const re = /^1\sAdded\sPassive\sSkill\sis\s([\w\s-]+)$/;
-export function getSkills (itemString) {
+const passiveSkillRegex = /1\sAdded\sPassive\sSkill\sis\s([\w\s-]+)$/;
+const passiveSkillCountRegex = /Adds (8|9|10|11|12) Passive Skills/;
+
+function getLines(itemString) {
   return itemString
     .split(/\n|\n\r/)
-    .map(line => line.trim())
+    .map(line => line.trim());
+}
+
+export function getSkills(itemString) {
+  const skills = getLines(itemString)
     .map(line => {
-      const match = line.match(re);
+      const match = line.match(passiveSkillRegex);
+      return match && match[0];
+    })
+    .filter(line => line)
+    .map(line => Object.values(ClusterJewelsMods).find(mod => mod.value.includes(line)))
+    .map(skill => {
+      const match = skill.value[0].match(passiveSkillRegex);
+      skill.name = match && match[1];
+      return skill;
+    });
+
+  console.log(skills)
+
+  return skills;
+}
+
+export function getNbrPassives(itemString) {
+  const nbrPassives = getLines(itemString)
+    .map(line => {
+      const match = line.match(passiveSkillCountRegex);
       return match && match[1];
     })
-    .filter(line => line);
-};
+    .filter(nbr => nbr);
+
+  return nbrPassives.length ? nbrPassives[0] : 8;
+}
 
 export function getPositions(itemString) {
   if (!itemString) {
@@ -33,11 +61,11 @@ export function getPositions(itemString) {
   }
 
   return sorted;
-};
+}
 
 export function getItem(hash) {
   return hash && LZString.decompressFromBase64(hash);
-};
+}
 
 export function getHash(item) {
   return LZString.compressToBase64(item);

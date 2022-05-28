@@ -40,7 +40,7 @@
 
 <script type="module">
   import { createApp } from 'vue';
-  import { getPositions, getItem, getHash } from './scripts.js';
+  import { getPositions, getItem, getHash, getNbrPassives } from './scripts.js';
   import { drawCanvas } from './canvas.js';
 
   createApp({
@@ -60,7 +60,7 @@
         this.itemEncoded = window.location.hash.replace('#', '');
         this.itemString = getItem(this.itemEncoded);
         this.skills = getPositions(this.itemString);
-        drawCanvas(this.skills);
+        drawCanvas(this.skills, getNbrPassives(this.itemString));
       },
     },
     mounted() {
