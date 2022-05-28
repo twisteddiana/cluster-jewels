@@ -235,6 +235,24 @@ function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
   ctx.fillText(skillName, x, textY);
 }*/
 
+function drawJewelBackground(canvas) {
+  const ctx = canvas.getContext("2d");
+  return new Promise(resolve => {
+    const image = new Image(240, 240);
+    image.onload = drawImageActualSize;
+    image.src = './assets/jewel_background.png';
+    function drawImageActualSize() {
+      ctx.drawImage(this, 185, 75);
+      ctx.save();
+      ctx.rotate(180 * TO_RADIANS);
+      ctx.translate(-469, -363);
+      ctx.drawImage(this, 0, 0);
+      ctx.restore();
+      resolve();
+    }
+  });
+}
+
 export async function drawCanvas(skills, nbrPassives) {
   if (!skills.length) {
     return;
@@ -244,6 +262,7 @@ export async function drawCanvas(skills, nbrPassives) {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
 
+  await drawJewelBackground(canvas);
   await drawJewelOutline(canvas, nbrPassives);
 
   await drawSkill(canvas, 300, 60, skills[1]);
