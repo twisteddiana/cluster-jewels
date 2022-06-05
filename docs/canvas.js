@@ -149,16 +149,12 @@ function drawSkill(canvas, x, y, skill, textPosition) {
         textY = y - padding;
       } else if (textPosition > 0) {
         textCtx.textAlign = 'left';
-        // textX = x ;
-        // textY = y + 130;
         textX = x;
         textY = y + 100;
       } else {
         textCtx.textAlign = 'right';
         textX = x + imageSize * 2;
         textY = y + 100;
-        // textX = x - 20;
-        // textY = y + 130;
       }
 
       textCtx.fillText(skill.name, textX, textY);
@@ -167,46 +163,6 @@ function drawSkill(canvas, x, y, skill, textPosition) {
     }
   });
 }
-
-/*
-function drawSkillCircle(canvas, x, y, r, skillName, top = true) {
-  if (!skillName) {
-    return;
-  }
-
-  const ctx = canvas.getContext("2d");
-  ctx.beginPath();
-
-  circle(ctx, x, y, r, 10, '#996928');
-  circle(ctx, x, y, r, 9, '#e0871b');
-  circle(ctx, x, y, r, 8, '#ffcc5c');
-  circle(ctx, x, y, r, 7, '#b28861');
-  circle(ctx, x, y, r, 6, '#ffffff');
-  circle(ctx, x, y, r, 5, '#e2c6b3');
-  circle(ctx, x, y, r, 4, '#edc577');
-
-  fill(ctx,'black');
-
-  ctx.closePath();
-
-  const fontSize = 20;
-  ctx.font = `${fontSize}px Noto Sans`;
-  ctx.textBaseline = "middle";
-  const padding = 20;
-  const textY = top ? y - r - padding * 1.5 : y + r + padding * 1.5;
-
-  const width = ctx.measureText(skillName).width;
-  const bgX = x - (width + padding) / 2;
-  const bgY = textY - (fontSize + padding) / 2;
-
-  ctx.fillStyle = 'black';
-  ctx.fillRect(bgX, bgY, width + padding, fontSize + padding);
-  ctx.stroke();
-
-  ctx.fillStyle = '#edc577';
-  ctx.textAlign = 'center';
-  ctx.fillText(skillName, x, textY);
-}*/
 
 function drawJewelBackground(canvas) {
   const ctx = canvas.getContext("2d");
@@ -238,9 +194,12 @@ export async function drawCanvas(skills, nbrPassives) {
   await drawJewelBackground(canvas);
   await drawJewelOutline(canvas, nbrPassives);
 
+  // left
+  await drawSkill(canvas, 190, 250, skills[0], -1);
+  // back
   await drawSkill(canvas, 300, 60, skills[1], 0);
-  await drawSkill(canvas, 410, 250, skills[0], 1);
-  await drawSkill(canvas, 190, 250, skills[2], -1);
+  // right
+  await drawSkill(canvas, 410, 250, skills[2], 1);
 };
 
 

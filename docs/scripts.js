@@ -25,8 +25,6 @@ export function getSkills(itemString) {
       return skill;
     });
 
-  console.log(skills)
-
   return skills;
 }
 
@@ -57,7 +55,7 @@ export function getPositions(itemString) {
     .map(item => item.skill);
 
   if (sorted.length < 3) {
-    sorted.unshift();
+    sorted.unshift(undefined);
   }
 
   return sorted;
