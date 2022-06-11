@@ -2,7 +2,7 @@ import LZString from './lzstring.js';
 import ClusterJewels from './cluster-jewels.js';
 import ClusterJewelsMods from './cluster-jewels-mods.js';
 
-const passiveSkillRegex = /1\sAdded\sPassive\sSkill\sis\s([\w\s-]+)$/;
+const passiveSkillRegex = /1\sAdded\sPassive\sSkill\sis\s(.+)$/;
 const passiveSkillCountRegex = /Adds (8|9|10|11|12) Passive Skills/;
 
 function getLines(itemString) {
