@@ -35,47 +35,56 @@ function drawSockets(canvas) {
   });
 }
 
-function drawSmallPassive(ctx, thisObj, x, y) {
-  const r = 15;
-  ctx.beginPath();
-  ctx.arc(x + r * 2, y +  r * 2, r, 0, 2 * Math.PI);
-  ctx.fillStyle = '#150f0a';
-  ctx.fill();
-  ctx.closePath();
-
-  ctx.drawImage(thisObj, x, y);
-}
-
-function drawSmallPassives(canvas, nbrPassives) {
+function drawSmallPassive(canvas, { x, y }) {
   return new Promise(resolve => {
     const ctx = canvas.getContext('2d');
+    const r = 15;
     const image = new Image();
     image.onload = drawImageActualSize;
     image.src = './assets/small_passive.png';
 
     function drawImageActualSize() {
-      drawSmallPassive(ctx, this, 300, 315);
-      drawSmallPassive(ctx, this, 235, 80);
-      drawSmallPassive(ctx, this, 365, 80);
+      ctx.beginPath();
+      ctx.arc(x + r * 2, y +  r * 2, r, 0, 2 * Math.PI);
+      ctx.fillStyle = '#150f0a';
+      ctx.fill();
+      ctx.closePath();
 
-      if (nbrPassives > 8) {
-        drawSmallPassive(ctx, this, 427, 190);
-      }
-      if (nbrPassives > 9) {
-        drawSmallPassive(ctx, this, 172, 190);
-      }
-
-      if (nbrPassives > 10) {
-        drawSmallPassive(ctx, this, 358, 300);
-      }
-
-      if (nbrPassives > 11) {
-        drawSmallPassive(ctx, this, 241, 300);
-      }
-
+      ctx.drawImage(this, x, y);
       resolve();
     }
   });
+}
+
+const smallPassivesPositions = [
+  { x: 300, y: 315 },
+  { x: 235, y: 80 },
+  { x: 365, y: 80 },
+  { x: 427, y: 190 },
+  { x: 172, y: 190 },
+  { x: 358, y: 300 },
+  { x: 241, y: 300 },
+];
+
+async function drawSmallPassives(canvas, nbrPassives) {
+  await drawSmallPassive(canvas, smallPassivesPositions[0]);
+  await drawSmallPassive(canvas, smallPassivesPositions[1]);
+  await drawSmallPassive(canvas, smallPassivesPositions[2]);
+
+  if (nbrPassives > 8) {
+    await drawSmallPassive(canvas, smallPassivesPositions[3]);
+  }
+  if (nbrPassives > 9) {
+    await drawSmallPassive(canvas, smallPassivesPositions[4]);
+  }
+
+  if (nbrPassives > 10) {
+    await drawSmallPassive(canvas, smallPassivesPositions[5]);
+  }
+
+  if (nbrPassives > 11) {
+    await drawSmallPassive(canvas, smallPassivesPositions[6]);
+  }
 }
 
 function drawConnectorLine(canvas) {
@@ -106,70 +115,58 @@ async function drawJewelOutline(canvas, nbrPassives) {
 
   await drawSockets(canvas);
   await drawSmallPassives(canvas, nbrPassives);
+}
 
+function displaySkillText(canvas, skill, x, y, textPosition) {
+  const fontSize = 20;
+  const padding = 20;
+  const imageSize = 30;
+
+  const textCtx = canvas.getContext("2d");
+  textCtx.font = `${fontSize}px Noto Sans`;
+  textCtx.textBaseline = "middle";
+  textCtx.fillStyle = '#edc577';
+
+  let textX;
+  let textY;
+
+  if (!textPosition) {
+    textCtx.textAlign = 'center';
+    textX = x + imageSize;
+    textY = y - padding;
+  } else if (textPosition > 0) {
+    textCtx.textAlign = 'left';
+    textX = x;
+    textY = y + 100;
+  } else {
+    textCtx.textAlign = 'right';
+    textX = x + imageSize * 2;
+    textY = y + 100;
+  }
+
+  textCtx.fillText(skill.name, textX, textY);
 }
 
 function drawSkill(canvas, x, y, skill, textPosition) {
   if (!skill) {
     // draw small passive instead
-    return new Promise(resolve => {
-      const ctx = canvas.getContext('2d');
-      const image = new Image();
-      image.onload = drawImageActualSize;
-      image.src = './assets/small_passive.png';
-
-      function drawImageActualSize() {
-        drawSmallPassive(ctx, this, x, y);
-        resolve();
-      }
-    })
+    return drawSmallPassive(canvas, { x, y });
   }
 
   return new Promise(resolve => {
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
     const image = new Image();
-    image.onload = drawImageActualSize;
+    image.onload = drawImage;
     image.src = './assets/notable.png';
 
     ctx.arc(x + 30, y + 30, 20, 0, 2 * Math.PI);
     ctx.fillStyle = '#150f0a';
     ctx.fill();
 
-    function drawImageActualSize() {
+    function drawImage() {
       ctx.drawImage(this, x, y);
-
-      const fontSize = 20;
-      const padding = 20;
-      const imageSize = 30;
-
-      const textCtx = canvas.getContext("2d");
-      textCtx.font = `${fontSize}px Noto Sans`;
-      textCtx.textBaseline = "middle";
-      textCtx.fillStyle = '#edc577';
-
-
-      const width = textCtx.measureText(skill.name).width;
-      let textX;
-      let textY;
-
-      if (!textPosition) {
-        // middle
-        textCtx.textAlign = 'center';
-        textX = x + imageSize;
-        textY = y - padding;
-      } else if (textPosition > 0) {
-        textCtx.textAlign = 'left';
-        textX = x;
-        textY = y + 100;
-      } else {
-        textCtx.textAlign = 'right';
-        textX = x + imageSize * 2;
-        textY = y + 100;
-      }
-
-      textCtx.fillText(skill.name, textX, textY);
-
+      displaySkillText(canvas, skill, x, y, textPosition);
       resolve();
     }
   });
