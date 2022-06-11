@@ -111,7 +111,18 @@ async function drawJewelOutline(canvas, nbrPassives) {
 
 function drawSkill(canvas, x, y, skill, textPosition) {
   if (!skill) {
-    return;
+    // draw small passive instead
+    return new Promise(resolve => {
+      const ctx = canvas.getContext('2d');
+      const image = new Image();
+      image.onload = drawImageActualSize;
+      image.src = './assets/small_passive.png';
+
+      function drawImageActualSize() {
+        drawSmallPassive(ctx, this, x, y);
+        resolve();
+      }
+    })
   }
 
   return new Promise(resolve => {
